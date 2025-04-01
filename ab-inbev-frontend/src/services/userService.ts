@@ -3,12 +3,12 @@ import { axiosClient } from "@/infrastructure/httpClient/axiosClient";
 
 class UserService {
   async createUser(newUser: CreateUpdateUserRequest) {
-    return await axiosClient.post("users", newUser).then((response) => {
-      if (response.status !== 201)
-        throw new Error(`Error creating user: ${response.statusText}`);
+    const response = await axiosClient.post("users", newUser);
 
-      return response.data;
-    });
+    if (response.status !== 201)
+      throw new Error(`Error creating user: ${response.statusText}`);
+
+    return response.data;
   }
 
   async getAllUsers() {

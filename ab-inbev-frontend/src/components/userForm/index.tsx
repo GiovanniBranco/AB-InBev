@@ -1,7 +1,6 @@
 "use client";
 
-import { CreateUpdateUserRequest } from "@/domain/types/user";
-import { getQueryClient } from "@/infrastructure/reactQuery/reactQueryClient";
+import { CreateUpdateUserRequest, User } from "@/domain/types/user";
 import UserService from "@/services/userService";
 import {
   Dialog,
@@ -9,35 +8,34 @@ import {
   DialogTitle,
   Transition,
 } from "@headlessui/react";
-import { useMutation } from "@tanstack/react-query";
 import { FormEvent, Fragment, useState } from "react";
 
-const UserForm = () => {
+interface UserFormProps {
+  onUserCreated: (newUser: User) => void;
+}
+
+const UserForm = ({ onUserCreated }: UserFormProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
-  const queryClient = getQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: async (newUser: CreateUpdateUserRequest) => {
-      await UserService.createUser(newUser);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-      setIsOpen(false);
-      setName("");
-      setEmail("");
-    },
-  });
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const newUser: CreateUpdateUserRequest = {
-      name,
-      email,
-    };
-    mutation.mutate(newUser);
+    const newUserRequest: CreateUpdateUserRequest = { name, email };
+
+    UserService.createUser(newUserRequest)
+      .then((createdUser) => {
+        alert("User created successfully!");
+        setName("");
+        setEmail("");
+        setIsOpen(false);
+
+        onUserCreated(createdUser);
+      })
+      .catch((error) => {
+        console.error("Error creating user:", error);
+        alert("Failed to create user. Please try again.");
+      });
   };
 
   return (

@@ -11,7 +11,6 @@
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@tailwindcss/postcss": "^4.0.17",
-    "@tanstack/react-query": "^5.71.1",
     "axios": "^1.8.4",
     "next": "15.2.4",
     "postcss": "^8.5.3",

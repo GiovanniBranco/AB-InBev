@@ -1,21 +1,17 @@
-"use client";
+import { User } from "@/domain/types/user";
 
-import { usersOptions } from "@/functions/userOptions";
-import { useSuspenseQuery } from "@tanstack/react-query";
+interface UserTableProps {
+  users?: User[];
+}
 
-const UserTable = () => {
-  const {
-    data: users,
-    isPending,
-    isFetching,
-    error,
-  } = useSuspenseQuery(usersOptions);
-
-  if (isPending || isFetching) return <p>Loading...</p>;
-
-  if (error) return <p>Error fetchingUsers users</p>;
-
-  if (!users || users.length === 0) return <p>No users found</p>;
+const UserTable = ({ users }: UserTableProps) => {
+  if (!users || users.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-gray-500">No users found</p>
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-x-auto flex justify-center">
@@ -28,7 +24,7 @@ const UserTable = () => {
           </tr>
         </thead>
         <tbody>
-          {users?.map((user) => (
+          {users.map((user) => (
             <tr
               key={user.id}
               className="hover:bg-gray-100 dark:hover:bg-gray-600"
